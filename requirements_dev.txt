@@ -1,0 +1,8 @@
+Django<2
+pyJWT
+djangorestframework
+django-rest-swagger
+
+django-filter
+
+tox
