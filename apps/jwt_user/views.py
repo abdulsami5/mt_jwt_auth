@@ -1,6 +1,7 @@
 from datetime import timedelta, datetime
 
 from django.contrib.auth import login, logout
+from rest_framework import status
 
 from rest_framework.response import Response
 from rest_framework.views import APIView

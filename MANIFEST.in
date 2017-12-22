@@ -6,6 +6,8 @@ include README.rst
 
 recursive-include tests *
 recursive-include apps *
+recursive-include mt_jwtuser/urls.py
+recursive-include mt_jwtuser/__init__.py
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
