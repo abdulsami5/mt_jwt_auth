@@ -24,7 +24,7 @@ test_requirements = [
 ]
 
 setup(
-    name='mt_jwtuser',
+    name='mt_jwt_auth',
     version='0.1.0',
     description="Python Boilerplate contains all the boilerplate you need to create a Python package.",
     long_description=readme + '\n\n' + history,

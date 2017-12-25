@@ -1,0 +1,20 @@
+Metadata-Version: 1.1
+Name: mt-jwtuser
+Version: 0.1.0
+Summary: Python Boilerplate contains all the boilerplate you need to create a Python package.
+Home-page: UNKNOWN
+Author: pss
+Author-email: pogorelov.ss@gmail.com
+License: MIT license
+Description-Content-Type: UNKNOWN
+Description: 
+        
+        
+Keywords: auth2_common
+Platform: UNKNOWN
+Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
