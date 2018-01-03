@@ -7,3 +7,5 @@ django-filter
 
 tox
 pytest-django
+
+pytest-cov
