@@ -1,44 +1,10 @@
-import jwt
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.utils.encoding import smart_text
 from django.utils.translation import ugettext as _
 
 from rest_framework import authentication, exceptions
-from rest_framework.authentication import get_authorization_header
 
-from apps.jwt_user.storages.django_cache import RedisCommonStorage
-from apps.jwt_user.utils.jwt_wraper import JWTAuthDec
-
-JWT_AUTH_HEADER_PREFIX = 'JWT'
-
-
-def get_jwt_value(request):
-    auth = get_authorization_header(request).split()
-    auth_header_prefix = JWT_AUTH_HEADER_PREFIX.lower()
-
-    if not auth:
-        #     if api_settings.JWT_AUTH_COOKIE:
-        #         return request.COOKIES.get(api_settings.JWT_AUTH_COOKIE)
-        return None
-
-    if smart_text(auth[0].lower()) != auth_header_prefix:
-        return None
-
-    if len(auth) == 1:
-        msg = _('Invalid Authorization header. No credentials provided.')
-        raise exceptions.AuthenticationFailed(msg)
-    elif len(auth) > 2:
-        msg = _('Invalid Authorization header. Credentials string '
-                'should not contain spaces.')
-        raise exceptions.AuthenticationFailed(msg)
-
-    return auth[1]
-
-
-def jwt_decode_handler(token):
-    storage = RedisCommonStorage()
-    payload = JWTAuthDec(keys_storage=storage).validate_payload(token)
-    return payload
+from apps.jwt_user.utils.common import get_jwt_value, jwt_decode_handler
 
 
 class ObtainJWTCustomAuthentication(authentication.SessionAuthentication):
@@ -56,24 +22,15 @@ class BaseJSONWebTokenAuthentication(authentication.BaseAuthentication):
         Returns a two-tuple of `User` and token if a valid signature has been
         supplied using JWT-based authentication.  Otherwise returns `None`.
         """
-        jwt_value = get_jwt_value(request)
-        if jwt_value is None:
+        token = get_jwt_value(request)
+        if token is None:
             return None
 
-        try:
-            payload = jwt_decode_handler(jwt_value)
-        except jwt.ExpiredSignature:
-            msg = _('Signature has expired.')
-            raise exceptions.AuthenticationFailed(msg)
-        except jwt.DecodeError:
-            msg = _('Error decoding signature.')
-            raise exceptions.AuthenticationFailed(msg)
-        except jwt.InvalidTokenError:
-            raise exceptions.AuthenticationFailed()
+        payload = jwt_decode_handler(token)
 
         user = self.authenticate_credentials(payload)
 
-        return user, jwt_value
+        return user, token
 
     @staticmethod
     def authenticate_credentials(payload):
@@ -116,5 +73,5 @@ class JSONWebTokenAuthentication(BaseJSONWebTokenAuthentication):
         header in a `401 Unauthenticated` response, or `None` if the
         authentication scheme should return `403 Permission Denied` responses.
         """
-        return '{0} realm="{1}"'.format(JWT_AUTH_HEADER_PREFIX, self.www_authenticate_realm)
+        return '{0} realm="{1}"'.format(settings.JWT_AUTH_HEADER_PREFIX, self.www_authenticate_realm)
 

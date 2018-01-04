@@ -1,12 +1,13 @@
 from datetime import timedelta, datetime
 
 from django.contrib.auth import login, logout
-from rest_framework import status
+from rest_framework import status, permissions
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.jwt_user.authenticators import ObtainJWTCustomAuthentication, JSONWebTokenAuthentication
+from apps.jwt_user.permissions import JWTBasePermission
 from apps.jwt_user.serializers import JSONWebTokenSerializer
 from apps.jwt_user.storages.django_cache import RedisCommonStorage
 from apps.jwt_user.utils.jwt_wraper import JWTAuthDec
@@ -127,8 +128,20 @@ class UserLogoutView(BaseJWTAuth):
         return Response('Error: Authentication required', status=status.HTTP_401_UNAUTHORIZED)
 
 
-class TestJWTView(APIView):
+class TestJWTAuthenticationView(APIView):
     authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        return Response({'get', 1})
+
+    def post(self, request, *args, **kwargs):
+        return Response({'post', 1})
+
+
+class TestJWTPermissionView(APIView):
+    authentication_classes = ()
+    permission_classes = (JWTBasePermission, )
 
     def get(self, request, *args, **kwargs):
         return Response({'get', 1})

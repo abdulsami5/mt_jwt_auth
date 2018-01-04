@@ -1,13 +1,29 @@
 import json
+import random
+
 from datetime import datetime
 
 from django.conf import settings
 from django.core.cache import caches
 
-from ..utils.common import generate_secret_key
-
-
 CACHE_CONFIG_NAME = 'session' if 'session' in settings.CACHES.keys() else next(iter(settings.CACHES.keys()))
+
+
+def get_random_string(length=12,
+                      allowed_chars='abcdefghijklmnopqrstuvwxyz'
+                                    'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'):
+    """
+    Returns a securely generated random string.
+
+    The default length of 12 with the a-z, A-Z, 0-9 character set returns
+    a 71-bit value. log_2((26+26+10)^12) =~ 71 bits
+    """
+    return ''.join(random.choice(allowed_chars) for i in range(length))
+
+
+def generate_secret_key():
+    chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+    return get_random_string(length=50, allowed_chars=chars)
 
 
 class JSONSerializer(object):
@@ -59,5 +75,5 @@ class RedisCommonStorage(object):
         value_str = self.serializer.dumps(obj)
         timeout = int((exp - datetime.utcnow()).total_seconds()) if isinstance(exp, datetime) else 30000
         self.cache.set(key=full_key, value=value_str, timeout=timeout)
-        print(self.cache.keys('*')[0] if hasattr(self.cache, 'keys') else 'hasn\'t keys')
-        print(self.get_obj(2))
+        # print(self.cache.keys('*')[0] if hasattr(self.cache, 'keys') else 'hasn\'t keys')
+        # print(self.get_obj(2))

@@ -1,18 +1,50 @@
-import random
+
+import jwt
+from django.utils.translation import ugettext as _
+
+from django.conf import settings
+from django.utils.encoding import smart_text
+
+from rest_framework.authentication import get_authorization_header
+from rest_framework import exceptions
+
+from apps.jwt_user.storages.django_cache import RedisCommonStorage
+from apps.jwt_user.utils.jwt_wraper import JWTAuthDec
 
 
-def get_random_string(length=12,
-                      allowed_chars='abcdefghijklmnopqrstuvwxyz'
-                                    'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'):
-    """
-    Returns a securely generated random string.
+def get_jwt_value(request):
+    auth = get_authorization_header(request).split()
+    auth_header_prefix = settings.JWT_AUTH_HEADER_PREFIX.lower()
 
-    The default length of 12 with the a-z, A-Z, 0-9 character set returns
-    a 71-bit value. log_2((26+26+10)^12) =~ 71 bits
-    """
-    return ''.join(random.choice(allowed_chars) for i in range(length))
+    if not auth:
+        #     if api_settings.JWT_AUTH_COOKIE:
+        #         return request.COOKIES.get(api_settings.JWT_AUTH_COOKIE)
+        return None
+
+    if smart_text(auth[0].lower()) != auth_header_prefix:
+        return None
+
+    if len(auth) == 1:
+        msg = _('Invalid Authorization header. No credentials provided.')
+        raise exceptions.AuthenticationFailed(msg)
+    elif len(auth) > 2:
+        msg = _('Invalid Authorization header. Credentials string '
+                'should not contain spaces.')
+        raise exceptions.AuthenticationFailed(msg)
+
+    return auth[1]
 
 
-def generate_secret_key():
-    chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
-    return get_random_string(length=50, allowed_chars=chars)
+def jwt_decode_handler(token):
+    storage = RedisCommonStorage()
+    try:
+        payload = JWTAuthDec(keys_storage=storage).validate_payload(token)
+    except jwt.ExpiredSignature:
+        msg = _('Signature has expired.')
+        raise exceptions.AuthenticationFailed(msg)
+    except jwt.DecodeError:
+        msg = _('Error decoding signature.')
+        raise exceptions.AuthenticationFailed(msg)
+    except jwt.InvalidTokenError:
+        raise exceptions.AuthenticationFailed()
+    return payload

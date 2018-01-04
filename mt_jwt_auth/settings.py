@@ -126,3 +126,5 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     )
 }
+
+JWT_AUTH_HEADER_PREFIX = 'JWT'

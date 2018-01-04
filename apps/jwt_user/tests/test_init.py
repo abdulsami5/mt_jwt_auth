@@ -1,44 +1,69 @@
 import pytest
 
-from rest_framework.test import APIRequestFactory
-#
-# # Using the standard RequestFactory API to create a form POST request
-# factory = APIRequestFactory()
-# request = factory.get('/api/v1/account/obtain-jwt/', {'title': 'new idea'})
 from apps.jwt_user.models import User
-from ..views import ObtainJSONWebToken, jwt_token_handler
-from django.test import Client
+from ..views import jwt_token_handler
 from rest_framework.test import APIClient
 
-client = APIClient()
-factory = APIRequestFactory()
 pytestmark = pytest.mark.django_db
 
 
-def test_get_jwt(client):
-    response = client.get('/api/v1/account/obtain-jwt/')
-    assert response.status_code == 200, str(response.status_text)
+@pytest.fixture
+def drf_api_client():
+    return APIClient()
 
 
-def test_get_login(client):
-    response = client.get('/api/v1/account/login/')
-    assert response.status_code == 405, str(response.status_text)
-
-
-def test_logout(client):
-    response = client.get('/api/v1/account/logout/')
-    assert response.status_code == 401, str(response.status_text)
-
-
-def create_user(username='xxx', email='sergei@decorist.com'):
+def create_user_get_token(username='test', email='sergei@decorist.com'):
     user = User(username=username, email='sergei@decorist.com', password='!')
     user.set_password('xhkwyb12')
     user.save()
-    return user
-
-
-def test_post_login():
-    user = create_user(username='root', email='sergei@decorist.com')
     token = jwt_token_handler(user, user.uuid)
-    response = client.post('/api/v1/account/login/', {'username': 'root', 'password': 'xhkwyb12'})
+    return user, token
+
+
+def test_get_jwt(drf_api_client):
+    response = drf_api_client.get('/api/v1/account/obtain-jwt/')
+    assert response.status_code == 200, str(response.status_text)
+
+
+def test_get_login(drf_api_client):
+    response = drf_api_client.get('/api/v1/account/login/')
+    assert response.status_code == 405, str(response.status_text)
+
+
+def test_logout(drf_api_client):
+    response = drf_api_client.get('/api/v1/account/logout/')
+    assert response.status_code == 401, str(response.status_text)
+
+
+def test_post_login(drf_api_client):
+    user, token = create_user_get_token(username='root', email='sergei@decorist.com')
+    response = drf_api_client.post('/api/v1/account/login/', {'username': 'root', 'password': 'xhkwyb12'})
     assert response.data == token, str(response.content)
+
+
+def test_authentication_view_post(drf_api_client):
+    user, token = create_user_get_token()
+    drf_api_client.credentials(HTTP_AUTHORIZATION='JWT ' + token.decode("utf-8"))
+    response = drf_api_client.post('/api/v1/account/test-authentication-view/', {'test': 'test'})
+    assert response.data == {'post', 1}, str(response.content)
+
+
+def test_authentication_view_get(drf_api_client):
+    user, token = create_user_get_token()
+    drf_api_client.credentials(HTTP_AUTHORIZATION='JWT ' + token.decode("utf-8"))
+    response = drf_api_client.get('/api/v1/account/test-authentication-view/')
+    assert response.data == {'get', 1}, str(response.content)
+
+
+def test_permission_view_post(drf_api_client):
+    user, token = create_user_get_token()
+    drf_api_client.credentials(HTTP_AUTHORIZATION='JWT ' + token.decode("utf-8"))
+    response = drf_api_client.post('/api/v1/account/test-permission-view/', {'test': 'test'})
+    assert response.data == {'post', 1}, str(response.content)
+
+
+def test_permission_view_get(drf_api_client):
+    user, token = create_user_get_token()
+    drf_api_client.credentials(HTTP_AUTHORIZATION='JWT ' + token.decode("utf-8"))
+    response = drf_api_client.get('/api/v1/account/test-permission-view/')
+    assert response.data == {'get', 1}, str(response.content)

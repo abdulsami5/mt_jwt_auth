@@ -14,4 +14,6 @@ urlpatterns = [
     url(r'^logout/$', views.UserLogoutView.as_view(), name='user-logout'),
     url(r'^obtain-jwt/$', views.ObtainJSONWebToken.as_view(), name='obtain-jwt'),
     # url(r'^profile/$', views.MyUserView.as_view(), name='my-user-view'),
+    url(r'^test-authentication-view', views.TestJWTAuthenticationView.as_view(), name='test-authentication-view'),
+    url(r'^test-permission-view', views.TestJWTPermissionView.as_view(), name='test-permission-view')
 ]
