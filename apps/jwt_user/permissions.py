@@ -1,5 +1,6 @@
 from rest_framework import permissions
 
+from apps.jwt_user.jwt_user import JWTUser
 from apps.jwt_user.utils.common import jwt_decode_handler, get_jwt_value
 
 
@@ -12,6 +13,7 @@ class JWTBasePermission(permissions.BasePermission):
         else:
             # TODO: check payload ? how ?
             payload = jwt_decode_handler(token)
+            request.jwt_user = JWTUser(payload)
             return True
 
     def has_object_permission(self, request, view, obj):
