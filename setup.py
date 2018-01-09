@@ -13,6 +13,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     # TODO: put package requirements here
+    'Django<2', 'pyJWT', 'djangorestframework'
 ]
 
 setup_requirements = [
@@ -26,17 +27,17 @@ test_requirements = [
 setup(
     name='mt_jwt_auth',
     version='0.1.0',
-    description="Python Boilerplate contains all the boilerplate you need to create a Python package.",
+    description="JWT authentication for Django based multi-tenant (microservices)  services",
     long_description=readme + '\n\n' + history,
     author="pss",
     author_email='pogorelov.ss@gmail.com',
-    # url='https://github.com/pss/auth2_common',
-    packages=find_packages(include=['auth2_common']),
+    url='https://github.com/Decorist/mt_jwt_auth',
+    packages=find_packages(include=['mt_jwt_auth']),
     include_package_data=True,
     install_requires=requirements,
     license="MIT license",
     zip_safe=False,
-    keywords='auth2_common',
+    keywords='mt_jwt_auth',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
