@@ -1,3 +1,4 @@
+from datetime import timedelta, datetime
 import unicodedata
 from django.contrib.auth.models import AnonymousUser
 
@@ -54,6 +55,11 @@ class JWTUser(JWTPermissionsMixin, AnonymousUser):
 
     def __init__(self, payload):
         super().__init__()
+        self.username = payload.get('username', '')
+        self.uuid = payload.get('uuid', '')
+        self._groups = payload.get('groups', list())
+
+        self.is_active = True if datetime.utcnow() < datetime.fromtimestamp(payload.get('exp', datetime.utcnow().timestamp())) else False
 
     def get_username(self):
         "Return the identifying username for this User"
@@ -91,6 +97,7 @@ class JWTUser(JWTPermissionsMixin, AnonymousUser):
     @classmethod
     def normalize_username(cls, username):
         return unicodedata.normalize('NFKC', username) if username else username
+
     # from AbstractUser --------------------------------
     username = ''
     first_name = ''
@@ -101,6 +108,7 @@ class JWTUser(JWTPermissionsMixin, AnonymousUser):
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['email']
+
 
     def get_full_name(self):
         """
@@ -120,3 +128,14 @@ class JWTUser(JWTPermissionsMixin, AnonymousUser):
         # send_mail(subject, message, from_email, [self.email], **kwargs)
         pass
 
+    @property
+    def is_staff(self):
+        return "STAFF" in str(self.groups)
+
+    @property
+    def is_admin(self):
+        return "ADMIN" in self.groups
+
+    @property
+    def is_designer(self):
+        return "DESIGNER" in self.groups

@@ -3,6 +3,7 @@ import pytest
 from apps.jwt_user.models import User
 from ..views import jwt_token_handler
 from rest_framework.test import APIClient
+from django.contrib.auth.models import Group
 
 pytestmark = pytest.mark.django_db
 
@@ -12,10 +13,19 @@ def drf_api_client():
     return APIClient()
 
 
-def create_user_get_token(username='test', email='sergei@decorist.com'):
-    user = User(username=username, email='sergei@decorist.com', password='!')
+def add_user_to_groups(user, groups=tuple()):
+    for group_name in groups:
+        group = Group(name=group_name)
+        group.save()
+        group.user_set.add(user)
+    return True
+
+
+def create_user_get_token(username='test', email='sergei@decorist.com', groups=tuple()):
+    user = User(username=username, email=email, password='!')
     user.set_password('xhkwyb12')
     user.save()
+    add_user_to_groups(user, groups)
     token = jwt_token_handler(user, user.uuid)
     return user, token
 
@@ -56,7 +66,7 @@ def test_authentication_view_get(drf_api_client):
 
 
 def test_permission_view_post(drf_api_client):
-    user, token = create_user_get_token()
+    user, token = create_user_get_token(groups=('ADMIN',))
     drf_api_client.credentials(HTTP_AUTHORIZATION='JWT ' + token.decode("utf-8"))
     response = drf_api_client.post('/api/v1/account/test-permission-view/', {'test': 'test'})
     assert response.data == {'post', 1}, str(response.content)
