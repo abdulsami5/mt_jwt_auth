@@ -8,8 +8,8 @@ from django.utils.encoding import smart_text
 from rest_framework.authentication import get_authorization_header
 from rest_framework import exceptions
 
-from apps.jwt_user.storages.django_cache import RedisCommonStorage
-from apps.jwt_user.utils.jwt_wraper import JWTAuthDec
+from mt_jwt_authentification.jwt_user.storages.django_cache import RedisCommonStorage
+from mt_jwt_authentification.jwt_user.utils.jwt_wraper import JWTAuthDec
 
 
 def get_jwt_value(request):

@@ -5,7 +5,7 @@ tox framework for building, py.test and pytest-cov for tests
 
 `tox -r` - rebuild with new virtualenv
 
-`pytest -vv --cov=apps.jwt_user apps` - run tests with pytest-cov (coverage) plugin - configure pyenv first
+`pytest -vv --cov=mt_jwt_authentification.jwt_user mt_jwt_authentification` - run tests with pytest-cov (coverage) plugin - configure pyenv first
 
 
 links:
