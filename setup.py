@@ -13,7 +13,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     # TODO: put package requirements here
-    'Django<2', 'pyJWT', 'djangorestframework'
+    'Django>1.9', 'pyJWT', 'djangorestframework'
 ]
 
 setup_requirements = [
