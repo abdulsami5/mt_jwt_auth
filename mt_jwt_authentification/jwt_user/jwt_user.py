@@ -58,6 +58,7 @@ class JWTUser(JWTPermissionsMixin, AnonymousUser):
         self.username = payload.get('username', '')
         self.uuid = payload.get('uuid', '')
         self._groups = payload.get('groups', list())
+        self.groups = self._groups
 
         self.is_active = True if datetime.utcnow() < datetime.fromtimestamp(payload.get('exp', datetime.utcnow().timestamp())) else False
 
