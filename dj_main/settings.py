@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'mt_jwt_auth_apps.jwt_user'
+    'mt_jwt_auth.jwt_user'
 ]
 
 MIDDLEWARE = [
@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'mt_jwt_auth.urls'
+ROOT_URLCONF = 'dj_main.urls'
 
 TEMPLATES = [
     {
@@ -68,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'mt_jwt_auth.wsgi.application'
+WSGI_APPLICATION = 'dj_main.wsgi.application'
 
 AUTH_USER_MODEL = 'jwt_user.User'
 

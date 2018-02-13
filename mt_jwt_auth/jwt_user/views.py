@@ -6,11 +6,11 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from mt_jwt_auth_apps.jwt_user.authenticators import ObtainJWTCustomAuthentication, JSONWebTokenAuthentication
-from mt_jwt_auth_apps.jwt_user.permissions import JWTBasePermission
-from mt_jwt_auth_apps.jwt_user.serializers import JSONWebTokenSerializer
-from mt_jwt_auth_apps.jwt_user.storages.django_cache import RedisCommonStorage
-from mt_jwt_auth_apps.jwt_user.utils.jwt_wraper import JWTAuthDec
+from mt_jwt_auth.jwt_user.authenticators import ObtainJWTCustomAuthentication, JSONWebTokenAuthentication
+from mt_jwt_auth.jwt_user.permissions import JWTBasePermission
+from mt_jwt_auth.jwt_user.serializers import JSONWebTokenSerializer
+from mt_jwt_auth.jwt_user.storages.django_cache import RedisCommonStorage
+from mt_jwt_auth.jwt_user.utils.jwt_wraper import JWTAuthDec
 
 JWT_EXPIRATION_DELTA = timedelta(seconds=300000)
 

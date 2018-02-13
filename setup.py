@@ -35,7 +35,7 @@ setup(
     author="pss",
     author_email='pogorelov.ss@gmail.com',
     url='https://github.com/Decorist/mt_jwt_auth',
-    packages=find_packages(include=['mt_jwt_auth_apps']),
+    packages=find_packages(include=['mt_jwt_auth']),
     include_package_data=True,
     install_requires=requirements,
     license="MIT license",
