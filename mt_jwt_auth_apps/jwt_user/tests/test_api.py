@@ -1,6 +1,6 @@
 import pytest
 
-from mt_jwt_authentification.jwt_user.models import User
+from mt_jwt_auth_apps.jwt_user.models import User
 from ..views import jwt_token_handler
 from rest_framework.test import APIClient
 from django.contrib.auth.models import Group

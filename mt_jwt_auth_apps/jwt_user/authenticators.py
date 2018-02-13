@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 
 from rest_framework import authentication, exceptions
 
-from mt_jwt_authentification.jwt_user.utils.common import get_jwt_value, jwt_decode_handler
+from mt_jwt_auth_apps.jwt_user.utils.common import get_jwt_value, jwt_decode_handler
 
 
 class ObtainJWTCustomAuthentication(authentication.SessionAuthentication):

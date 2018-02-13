@@ -1,7 +1,7 @@
 from rest_framework import permissions
 
-from mt_jwt_authentification.jwt_user.jwt_user import JWTUser
-from mt_jwt_authentification.jwt_user.utils.common import jwt_decode_handler, get_jwt_value
+from mt_jwt_auth_apps.jwt_user.jwt_user import JWTUser
+from mt_jwt_auth_apps.jwt_user.utils.common import jwt_decode_handler, get_jwt_value
 
 
 class JWTBasePermission(permissions.BasePermission):
@@ -27,7 +27,7 @@ class AnyGroupJWTBasePermission(JWTBasePermission):
     '''
 
     def has_permission(self, request, view):
-        # TODO Temp. Remove as deprecated when all mt_jwt_authentification use jwt authentication
+        # TODO Temp. Remove as deprecated when all mt_jwt_auth_apps use jwt authentication
         old_perm = False
 
         try:

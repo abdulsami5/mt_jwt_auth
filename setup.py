@@ -4,6 +4,11 @@
 """The setup script."""
 
 from setuptools import setup, find_packages
+from pip.req import parse_requirements
+
+
+install_reqs = parse_requirements('requirements.txt', session=False)
+install_reqs_test = parse_requirements('requirements_dev.txt', session=False)
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -11,17 +16,15 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [
-    # TODO: put package requirements here
-    'Django>1.9', 'pyJWT', 'djangorestframework'
-]
+requirements = [str(ir.req) for ir in install_reqs]
 
 setup_requirements = [
-    # TODO(pss): put setup requirements (distutils extensions, etc.) here
+    # TODO: put setup requirements (distutils extensions, etc.) here
 ]
 
 test_requirements = [
     # TODO: put package test requirements here
+    str(ir.req) for ir in install_reqs_test
 ]
 
 setup(
@@ -32,7 +35,7 @@ setup(
     author="pss",
     author_email='pogorelov.ss@gmail.com',
     url='https://github.com/Decorist/mt_jwt_auth',
-    packages=find_packages(include=['mt_jwt_authentification']),
+    packages=find_packages(include=['mt_jwt_auth_apps']),
     include_package_data=True,
     install_requires=requirements,
     license="MIT license",
