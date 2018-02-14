@@ -57,8 +57,7 @@ class JWTUser(JWTPermissionsMixin, AnonymousUser):
         super().__init__()
         self.username = payload.get('username', '')
         self.uuid = payload.get('uuid', '')
-        self._groups = payload.get('groups', list())
-        self.groups = self._groups
+        self.groups = payload.get('groups', list())
 
         self.is_active = True if datetime.utcnow() < datetime.fromtimestamp(payload.get('exp', datetime.utcnow().timestamp())) else False
 
@@ -77,19 +76,11 @@ class JWTUser(JWTPermissionsMixin, AnonymousUser):
 
     @property
     def is_anonymous(self):
-        """
-        Always return False. This is a way of comparing User objects to
-        anonymous users.
-        """
-        return False
+        return not self.is_authenticated
 
     @property
     def is_authenticated(self):
-        """
-        Always return True. This is a way to tell if the user has been
-        authenticated in templates.
-        """
-        return True
+        return bool(self.uuid)
 
     @classmethod
     def get_email_field_name(cls):
