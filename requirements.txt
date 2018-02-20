@@ -3,3 +3,7 @@ Django>1.9
 pyJWT
 
 djangorestframework
+
+jwcrypto
+
+psycopg2
