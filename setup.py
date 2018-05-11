@@ -4,7 +4,10 @@
 """The setup script."""
 
 from setuptools import setup, find_packages
-from pip.req import parse_requirements
+try:    # for pip >= 10
+    from pip._internal.req import parse_requirements
+except ImportError:    # for pip <= 9.0.3
+    from pip.req import parse_requirements
 
 
 install_reqs = parse_requirements('requirements.txt', session=False)
@@ -29,7 +32,7 @@ test_requirements = [
 
 setup(
     name='mt_jwt_auth',
-    version='0.1.0',
+    version='0.1.1',
     description="JWT authentication for Django based multi-tenant (microservices)  services",
     long_description=readme + '\n\n' + history,
     author="pss",
