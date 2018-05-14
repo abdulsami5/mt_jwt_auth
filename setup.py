@@ -32,7 +32,7 @@ test_requirements = [
 
 setup(
     name='mt_jwt_auth',
-    version='0.1.1',
+    version='0.1.2',
     description="JWT authentication for Django based multi-tenant (microservices)  services",
     long_description=readme + '\n\n' + history,
     author="pss",
