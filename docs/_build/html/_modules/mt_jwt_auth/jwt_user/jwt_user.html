@@ -1,0 +1,213 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>mt_jwt_auth.jwt_user.jwt_user &#8212; mt_jwt_auth 0.1.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for mt_jwt_auth.jwt_user.jwt_user</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">unicodedata</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="k">import</span> <span class="n">AnonymousUser</span>
+
+
+<div class="viewcode-block" id="JWTPermissionsMixin"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTPermissionsMixin">[docs]</a><span class="k">class</span> <span class="nc">JWTPermissionsMixin</span><span class="p">:</span>
+    <span class="n">is_superuser</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">user_permissions</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="JWTPermissionsMixin.Meta"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTPermissionsMixin.Meta">[docs]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="JWTPermissionsMixin.get_group_permissions"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTPermissionsMixin.get_group_permissions">[docs]</a>    <span class="k">def</span> <span class="nf">get_group_permissions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of permission strings that this user has through their</span>
+<span class="sd">        groups. This method queries all available auth backends. If an object</span>
+<span class="sd">        is passed in, only permissions matching this object are returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">permissions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">permissions</span></div>
+
+<div class="viewcode-block" id="JWTPermissionsMixin.get_all_permissions"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTPermissionsMixin.get_all_permissions">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_permissions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        user.get_group_permissions + user.get_user_permissions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">permissions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">permissions</span></div>
+
+<div class="viewcode-block" id="JWTPermissionsMixin.has_perm"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTPermissionsMixin.has_perm">[docs]</a>    <span class="k">def</span> <span class="nf">has_perm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">perm</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="JWTPermissionsMixin.has_perms"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTPermissionsMixin.has_perms">[docs]</a>    <span class="k">def</span> <span class="nf">has_perms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">perm_list</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if the user has each of the specified permissions. If</span>
+<span class="sd">        object is passed, it checks if the user has all required perms for this</span>
+<span class="sd">        object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">has_perm</span><span class="p">(</span><span class="n">perm</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">perm</span> <span class="ow">in</span> <span class="n">perm_list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JWTPermissionsMixin.has_module_perms"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTPermissionsMixin.has_module_perms">[docs]</a>    <span class="k">def</span> <span class="nf">has_module_perms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if the user has any permissions in the given app label.</span>
+<span class="sd">        Uses pretty much the same logic as has_perm, above.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Active superusers have all permissions.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_superuser</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span></div></div>
+
+
+<div class="viewcode-block" id="JWTUser"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTUser">[docs]</a><span class="k">class</span> <span class="nc">JWTUser</span><span class="p">(</span><span class="n">JWTPermissionsMixin</span><span class="p">,</span> <span class="n">AnonymousUser</span><span class="p">):</span>
+    <span class="c1"># from AbstractBaseUser --------------------------------</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uuid</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;groups&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_name</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;first_name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_name</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;last_name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;exp&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()))</span> <span class="k">else</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="JWTUser.get_username"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTUser.get_username">[docs]</a>    <span class="k">def</span> <span class="nf">get_username</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Return the identifying username for this User&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">USERNAME_FIELD</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_username</span><span class="p">()</span>
+
+<div class="viewcode-block" id="JWTUser.clean"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTUser.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">USERNAME_FIELD</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_username</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_username</span><span class="p">()))</span></div>
+
+<div class="viewcode-block" id="JWTUser.natural_key"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTUser.natural_key">[docs]</a>    <span class="k">def</span> <span class="nf">natural_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_username</span><span class="p">(),)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_anonymous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_authenticated</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_authenticated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uuid</span><span class="p">)</span>
+
+<div class="viewcode-block" id="JWTUser.get_email_field_name"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTUser.get_email_field_name">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_email_field_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;email&#39;</span></div>
+
+<div class="viewcode-block" id="JWTUser.normalize_username"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTUser.normalize_username">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">normalize_username</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s1">&#39;NFKC&#39;</span><span class="p">,</span> <span class="n">username</span><span class="p">)</span> <span class="k">if</span> <span class="n">username</span> <span class="k">else</span> <span class="n">username</span></div>
+
+    <span class="c1"># from AbstractUser --------------------------------</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">first_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">last_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">is_staff</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">EMAIL_FIELD</span> <span class="o">=</span> <span class="s1">&#39;email&#39;</span>
+    <span class="n">USERNAME_FIELD</span> <span class="o">=</span> <span class="s1">&#39;email&#39;</span>
+    <span class="n">REQUIRED_FIELDS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="JWTUser.get_full_name"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTUser.get_full_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_full_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the first_name plus the last_name, with a space in between.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">full_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">full_name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="JWTUser.get_short_name"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTUser.get_short_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_short_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Returns the short name for the user.&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_name</span></div>
+
+<div class="viewcode-block" id="JWTUser.email_user"><a class="viewcode-back" href="../../../source/mt_jwt_auth.jwt_user.html#mt_jwt_auth.jwt_user.jwt_user.JWTUser.email_user">[docs]</a>    <span class="k">def</span> <span class="nf">email_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">from_email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends an email to this User.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># send_mail(subject, message, from_email, [self.email], **kwargs)</span>
+        <span class="k">pass</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_staff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;STAFF&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;ADMIN&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_designer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;DESIGNER&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Decorist.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

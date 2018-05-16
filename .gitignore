@@ -5,3 +5,6 @@ db.sqlite3
 mt_jwt_auth.egg-info/
 .cache/
 .coverage
+
+.pytest_cache/
+

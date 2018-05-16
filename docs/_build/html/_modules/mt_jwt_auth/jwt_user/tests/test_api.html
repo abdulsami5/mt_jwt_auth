@@ -1,0 +1,156 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>mt_jwt_auth.jwt_user.tests.test_api &#8212; mt_jwt_auth 0.1.2 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for mt_jwt_auth.jwt_user.tests.test_api</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">mt_jwt_auth.jwt_user.models</span> <span class="k">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">..views</span> <span class="k">import</span> <span class="n">jwt_token_handler</span>
+<span class="kn">from</span> <span class="nn">rest_framework.test</span> <span class="k">import</span> <span class="n">APIClient</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="k">import</span> <span class="n">Group</span>
+
+<span class="n">pytestmark</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">django_db</span>
+
+
+<div class="viewcode-block" id="drf_api_client"><a class="viewcode-back" href="../../../../source/mt_jwt_auth.jwt_user.tests.html#mt_jwt_auth.jwt_user.tests.test_api.drf_api_client">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">drf_api_client</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">APIClient</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="add_user_to_groups"><a class="viewcode-back" href="../../../../source/mt_jwt_auth.jwt_user.tests.html#mt_jwt_auth.jwt_user.tests.test_api.add_user_to_groups">[docs]</a><span class="k">def</span> <span class="nf">add_user_to_groups</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="nb">tuple</span><span class="p">()):</span>
+    <span class="k">for</span> <span class="n">group_name</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">group_name</span><span class="p">)</span>
+        <span class="n">group</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">group</span><span class="o">.</span><span class="n">user_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="create_user_get_token"><a class="viewcode-back" href="../../../../source/mt_jwt_auth.jwt_user.tests.html#mt_jwt_auth.jwt_user.tests.test_api.create_user_get_token">[docs]</a><span class="k">def</span> <span class="nf">create_user_get_token</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s1">&#39;sergei@decorist.com&#39;</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="nb">tuple</span><span class="p">()):</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;!&#39;</span><span class="p">)</span>
+    <span class="n">user</span><span class="o">.</span><span class="n">set_password</span><span class="p">(</span><span class="s1">&#39;xhkwyb12&#39;</span><span class="p">)</span>
+    <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">add_user_to_groups</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">groups</span><span class="p">)</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">jwt_token_handler</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">uuid</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">user</span><span class="p">,</span> <span class="n">token</span></div>
+
+
+<div class="viewcode-block" id="test_get_jwt"><a class="viewcode-back" href="../../../../source/mt_jwt_auth.jwt_user.tests.html#mt_jwt_auth.jwt_user.tests.test_api.test_get_jwt">[docs]</a><span class="k">def</span> <span class="nf">test_get_jwt</span><span class="p">(</span><span class="n">drf_api_client</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">drf_api_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/api/v1/account/obtain-jwt/&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_get_login"><a class="viewcode-back" href="../../../../source/mt_jwt_auth.jwt_user.tests.html#mt_jwt_auth.jwt_user.tests.test_api.test_get_login">[docs]</a><span class="k">def</span> <span class="nf">test_get_login</span><span class="p">(</span><span class="n">drf_api_client</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">drf_api_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/api/v1/account/login/&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">405</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_logout"><a class="viewcode-back" href="../../../../source/mt_jwt_auth.jwt_user.tests.html#mt_jwt_auth.jwt_user.tests.test_api.test_logout">[docs]</a><span class="k">def</span> <span class="nf">test_logout</span><span class="p">(</span><span class="n">drf_api_client</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">drf_api_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/api/v1/account/logout/&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_post_login"><a class="viewcode-back" href="../../../../source/mt_jwt_auth.jwt_user.tests.html#mt_jwt_auth.jwt_user.tests.test_api.test_post_login">[docs]</a><span class="k">def</span> <span class="nf">test_post_login</span><span class="p">(</span><span class="n">drf_api_client</span><span class="p">):</span>
+    <span class="n">user</span><span class="p">,</span> <span class="n">token</span> <span class="o">=</span> <span class="n">create_user_get_token</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s1">&#39;sergei@decorist.com&#39;</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">drf_api_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/api/v1/account/login/&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="s1">&#39;xhkwyb12&#39;</span><span class="p">})</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="n">token</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_authentication_view_post"><a class="viewcode-back" href="../../../../source/mt_jwt_auth.jwt_user.tests.html#mt_jwt_auth.jwt_user.tests.test_api.test_authentication_view_post">[docs]</a><span class="k">def</span> <span class="nf">test_authentication_view_post</span><span class="p">(</span><span class="n">drf_api_client</span><span class="p">):</span>
+    <span class="n">user</span><span class="p">,</span> <span class="n">token</span> <span class="o">=</span> <span class="n">create_user_get_token</span><span class="p">()</span>
+    <span class="n">drf_api_client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="s1">&#39;JWT &#39;</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">drf_api_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/api/v1/account/test-authentication-view/&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span><span class="p">})</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_authentication_view_get"><a class="viewcode-back" href="../../../../source/mt_jwt_auth.jwt_user.tests.html#mt_jwt_auth.jwt_user.tests.test_api.test_authentication_view_get">[docs]</a><span class="k">def</span> <span class="nf">test_authentication_view_get</span><span class="p">(</span><span class="n">drf_api_client</span><span class="p">):</span>
+    <span class="n">user</span><span class="p">,</span> <span class="n">token</span> <span class="o">=</span> <span class="n">create_user_get_token</span><span class="p">()</span>
+    <span class="n">drf_api_client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="s1">&#39;JWT &#39;</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">drf_api_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/api/v1/account/test-authentication-view/&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_permission_view_post"><a class="viewcode-back" href="../../../../source/mt_jwt_auth.jwt_user.tests.html#mt_jwt_auth.jwt_user.tests.test_api.test_permission_view_post">[docs]</a><span class="k">def</span> <span class="nf">test_permission_view_post</span><span class="p">(</span><span class="n">drf_api_client</span><span class="p">):</span>
+    <span class="n">user</span><span class="p">,</span> <span class="n">token</span> <span class="o">=</span> <span class="n">create_user_get_token</span><span class="p">(</span><span class="n">groups</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;ADMIN&#39;</span><span class="p">,))</span>
+    <span class="n">drf_api_client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="s1">&#39;JWT &#39;</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">drf_api_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/api/v1/account/test-permission-view/&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span><span class="p">})</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_permission_view_get"><a class="viewcode-back" href="../../../../source/mt_jwt_auth.jwt_user.tests.html#mt_jwt_auth.jwt_user.tests.test_api.test_permission_view_get">[docs]</a><span class="k">def</span> <span class="nf">test_permission_view_get</span><span class="p">(</span><span class="n">drf_api_client</span><span class="p">):</span>
+    <span class="n">user</span><span class="p">,</span> <span class="n">token</span> <span class="o">=</span> <span class="n">create_user_get_token</span><span class="p">()</span>
+    <span class="n">drf_api_client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="s1">&#39;JWT &#39;</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">drf_api_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/api/v1/account/test-permission-view/&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Decorist.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
