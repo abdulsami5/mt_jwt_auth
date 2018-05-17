@@ -33,7 +33,7 @@ def jwt_payload_handler(user):
 
     return payload
 
-
+# Docs: Please provide a description/docstring for the method below
 def jwt_token_handler(user, session_key):
     # +
     storage = RedisCommonStorage()
@@ -84,7 +84,8 @@ class BaseJWTAuth(APIView):
 
 class ObtainJSONWebToken(BaseJWTAuth):
     http_method_names = ['get']
-
+    
+    #docs: please provide a docstring for the method below
     def get(self, request, *args, **kwargs):
         user = request.user
         if user.is_authenticated:
@@ -99,6 +100,7 @@ class ObtainJSONWebToken(BaseJWTAuth):
 class UserLoginView(BaseJWTAuth):
     http_method_names = ['post']
 
+    #docs: please provide a docstring for the method below
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
 

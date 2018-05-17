@@ -7,4 +7,5 @@ mt_jwt_auth.egg-info/
 .coverage
 
 .pytest_cache/
+*.DS_Store
 
