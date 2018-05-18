@@ -6,7 +6,7 @@ from mt_jwt_auth.jwt_user.utils.common import jwt_decode_handler, get_jwt_value
 
 class JWTBasePermission(permissions.BasePermission):
 
-    # Docs: can you please explain the difference between the two methods below
+    #docs: can you please explain the difference between the two methods below
     # and give them some description.
     def has_permission(self, request, view):
         token = get_jwt_value(request)

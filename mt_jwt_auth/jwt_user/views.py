@@ -33,7 +33,7 @@ def jwt_payload_handler(user):
 
     return payload
 
-# Docs: Please provide a description/docstring for the method below
+#docs: Please provide a description/docstring for the method below
 def jwt_token_handler(user, session_key):
     # +
     storage = RedisCommonStorage()
