@@ -5,7 +5,7 @@ db.sqlite3
 mt_jwt_auth.egg-info/
 .cache/
 .coverage
-docs/
+docs/_build
 .pytest_cache/
 *.DS_Store
 
