@@ -6,9 +6,11 @@ from mt_jwt_auth.jwt_user.utils.common import jwt_decode_handler, get_jwt_value
 
 class JWTBasePermission(permissions.BasePermission):
 
-    #docs: can you please explain the difference between the two methods below
-    # and give them some description.
     def has_permission(self, request, view):
+        """
+        Returns True if user is authenticated and ads JWT_user instance
+        with user information to request
+        """
         token = get_jwt_value(request)
         if token is None:
             return False
@@ -17,8 +19,11 @@ class JWTBasePermission(permissions.BasePermission):
             payload = jwt_decode_handler(token)
             request.jwt_user = JWTUser(payload)
             return True
-    
+
     def has_object_permission(self, request, view, obj):
+        """
+        Returns True if user is allowed to act on particular object
+        """
         return True
 
 
